@@ -1,7 +1,18 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose"
 import { HydratedDocument, Types } from 'mongoose'
+import { User } from '../../users/schemas/user.schema'
 
 export type MessageDocument = HydratedDocument<Message>
+
+export interface PopulatedMessage extends Omit<Message, 'sender'> {
+    _id: Types.ObjectId
+    sender: {
+        _id: Types.ObjectId
+        name: string
+    }
+    createdAt: Date
+    updatedAt: Date
+}
 
 @Schema({ timestamps: true })
 export class Message {

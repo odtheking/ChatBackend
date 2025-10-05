@@ -1,7 +1,7 @@
 import {HttpException, HttpStatus, Injectable} from "@nestjs/common"
 import {InjectModel} from "@nestjs/mongoose"
 import {Chat, ChatDocument} from "./schemas/chat.schema"
-import {Message, MessageDocument} from "./schemas/message.schema"
+import {Message, MessageDocument, PopulatedMessage} from "./schemas/message.schema"
 import {Model, Types} from "mongoose"
 import {UsersService} from '../users/users.service'
 
@@ -32,20 +32,22 @@ export class ChatsService {
         return this.chatModel.findById(chatId).populate('users')
     }
 
-    async getMessages(chatId: Types.ObjectId): Promise<MessageDocument[]> {
+    async getMessages(chatId: Types.ObjectId): Promise<PopulatedMessage[]> {
         return this.messageModel
             .find({chat: chatId})
             .populate('sender', 'name _id')
             .sort({createdAt: 1})
+            .lean<PopulatedMessage[]>()
             .exec()
     }
 
-    async saveMessage(chatId: Types.ObjectId, senderId: Types.ObjectId, content: string) {
+    async saveMessage(chatId: Types.ObjectId, senderId: Types.ObjectId, content: string): Promise<PopulatedMessage | null> {
         const savedMessage = await (new this.messageModel({ chat: chatId, sender: senderId, content: content.trim() })).save()
         
         return this.messageModel
             .findById(savedMessage._id)
             .populate('sender', 'name _id')
+            .lean<PopulatedMessage>()
             .exec()
     }
 

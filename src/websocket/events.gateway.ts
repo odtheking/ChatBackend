@@ -132,8 +132,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const formattedMessages = messages.map(message => ({
             id: message._id,
             content: message.content,
-            sender: (message.sender as any).name,
-            timestamp: (message as any).createdAt,
+            sender: message.sender.name,
+            timestamp: message.createdAt,
             chatId: message.chat.toString()
         }))
 
@@ -207,8 +207,8 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const messageForClient = {
             id: savedMessage._id,
             content: savedMessage.content,
-            sender: (savedMessage.sender as any).name,
-            timestamp: (savedMessage as any).createdAt,
+            sender: savedMessage.sender.name,
+            timestamp: savedMessage.createdAt,
             chatId: savedMessage.chat.toString()
         }
 
